@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modelo Financiero · SOFOM Fintech</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d4a;
+    --accent: #00d4a8;
+    --accent2: #f59e0b;
+    --accent3: #6366f1;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+/* Grid background */
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background-image:
+linear-gradient(rgba(0,212,168,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,212,168,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+.wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 20px 80px; }
+
+/* Header */
+header { text-align: center; margin-bottom: 48px; }
+.eyebrow {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 12px;
+}
+h1 {
+font-family: ‘DM Serif Display’, serif;
+font-size: clamp(28px, 5vw, 52px);
+line-height: 1.1;
+background: linear-gradient(135deg, #fff 0%, var(–accent) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 12px;
+}
+.subtitle { color: var(–muted); font-size: 15px; font-weight: 400; }
+
+/* Sliders section */
+.config-panel {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 32px;
+margin-bottom: 32px;
+}
+.config-title {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 28px;
+}
+.sliders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; }
+
+.slider-group label {
+display: flex; justify-content: space-between; align-items: center;
+font-size: 13px; color: var(–muted); margin-bottom: 10px; font-weight: 400;
+}
+.slider-group label span {
+font-family: ‘DM Mono’, monospace;
+font-size: 14px; color: var(–accent); font-weight: 500;
+}
+input[type=range] {
+-webkit-appearance: none;
+width: 100%; height: 3px;
+background: var(–border);
+border-radius: 2px; outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 16px; height: 16px;
+border-radius: 50%;
+background: var(–accent);
+border: 2px solid var(–bg);
+box-shadow: 0 0 8px rgba(0,212,168,0.4);
+transition: box-shadow .2s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+box-shadow: 0 0 16px rgba(0,212,168,0.7);
+}
+
+/* Toggle tabs */
+.toggle-row { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.tab-btn {
+padding: 8px 18px; border-radius: 20px;
+border: 1px solid var(–border);
+background: transparent; color: var(–muted);
+font-family: ‘Outfit’, sans-serif; font-size: 13px;
+cursor: pointer; transition: all .2s;
+}
+.tab-btn.active {
+background: var(–accent); border-color: var(–accent);
+color: var(–bg); font-weight: 600;
+}
+
+/* KPI Cards */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.kpi-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 20px;
+position: relative; overflow: hidden;
+transition: border-color .2s;
+}
+.kpi-card::before {
+content: ‘’;
+position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.kpi-card.green::before { background: var(–accent); }
+.kpi-card.amber::before { background: var(–accent2); }
+.kpi-card.purple::before { background: var(–accent3); }
+.kpi-card.red::before { background: var(–danger); }
+
+.kpi-label { font-size: 11px; color: var(–muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.kpi-value { font-family: ‘DM Serif Display’, serif; font-size: 26px; color: var(–text); line-height: 1; }
+.kpi-value.green { color: var(–accent); }
+.kpi-value.amber { color: var(–accent2); }
+.kpi-value.purple { color: var(–accent3); }
+.kpi-sub { font-size: 11px; color: var(–muted); margin-top: 6px; }
+
+/* Tables */
+.section { margin-bottom: 32px; }
+.section-header {
+display: flex; justify-content: space-between; align-items: center;
+margin-bottom: 16px;
+}
+.section-title { font-family: ‘DM Serif Display’, serif; font-size: 20px; }
+.section-badge {
+font-family: ‘DM Mono’, monospace; font-size: 11px;
+padding: 4px 12px; border-radius: 20px;
+background: rgba(0,212,168,0.1); color: var(–accent);
+border: 1px solid rgba(0,212,168,0.2);
+}
+
+table { width: 100%; border-collapse: collapse; }
+th {
+text-align: left; font-size: 11px; letter-spacing: 1px;
+text-transform: uppercase; color: var(–muted);
+padding: 10px 16px; border-bottom: 1px solid var(–border);
+font-family: ‘DM Mono’, monospace; font-weight: 400;
+}
+td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid rgba(30,45,74,0.5); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+.num { font-family: ‘DM Mono’, monospace; text-align: right; }
+.pos { color: var(–green); }
+.neg { color: var(–danger); }
+.neutral { color: var(–accent2); }
+.total-row td { border-top: 1px solid var(–border); font-weight: 600; color: var(–accent); }
+
+/* Projection chart */
+.chart-container {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 28px;
+margin-bottom: 32px;
+}
+.chart-wrap { position: relative; height: 220px; display: flex; align-items: flex-end; gap: 6px; padding-top: 20px; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar-stack { width: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+.bar {
+width: 100%; border-radius: 4px 4px 0 0;
+transition: height .4s cubic-bezier(.4,0,.2,1);
+position: relative; cursor: pointer;
+min-height: 2px;
+}
+.bar.income { background: linear-gradient(180deg, var(–accent) 0%, rgba(0,212,168,0.5) 100%); }
+.bar.cost { background: linear-gradient(180deg, var(–danger) 0%, rgba(239,68,68,0.5) 100%); }
+.bar.profit { background: linear-gradient(180deg, var(–accent2) 0%, rgba(245,158,11,0.5) 100%); }
+.bar-label { font-size: 10px; color: var(–muted); font-family: ‘DM Mono’, monospace; }
+.chart-legend { display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(–muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* Funding structure */
+.funding-row { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+.funding-card {
+flex: 1; min-width: 200px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 20px;
+}
+.funding-label { font-size: 12px; color: var(–muted); margin-bottom: 4px; }
+.funding-amount { font-family: ‘DM Serif Display’, serif; font-size: 22px; margin-bottom: 4px; }
+.funding-pct { font-family: ‘DM Mono’, monospace; font-size: 12px; color: var(–muted); }
+.progress-bar { height: 4px; background: var(–border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width .4s; }
+
+/* Risk table */
+.risk-pill {
+display: inline-block; padding: 3px 10px; border-radius: 20px;
+font-size: 11px; font-family: ‘DM Mono’, monospace;
+}
+.risk-high { background: rgba(239,68,68,0.15); color: var(–danger); }
+.risk-med { background: rgba(245,158,11,0.15); color: var(–accent2); }
+.risk-low { background: rgba(0,212,168,0.15); color: var(–accent); }
+
+/* Sensitivity */
+.sensitivity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.sens-card {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 16px;
+text-align: center;
+}
+.sens-scenario { font-size: 12px; color: var(–muted); margin-bottom: 6px; }
+.sens-roi { font-family: ‘DM Serif Display’, serif; font-size: 24px; }
+.sens-note { font-size: 11px; color: var(–muted); margin-top: 4px; }
+
+.table-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 16px;
+overflow: hidden;
+margin-bottom: 32px;
+}
+.table-card table { margin: 0; }
+
+footer { text-align: center; color: var(–muted); font-size: 12px; font-family: ‘DM Mono’, monospace; padding-top: 40px; border-top: 1px solid var(–border); }
+
+@media (max-width: 600px) {
+.sliders-grid { grid-template-columns: 1fr; }
+.kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="eyebrow">Proyección Financiera · 36 Meses</div>
+    <h1>Modelo SOFOM<br>Factoraje + Crédito PyME</h1>
+    <p class="subtitle">Capital propio $500,000 MXN · Fondeo mixto con inversionistas · Elaborado por Mtro. Alan Cerón C.</p>
+  </header>
+
+  <!-- Config Panel -->
+
+  <div class="config-panel">
+    <div class="config-title">⚙ Parámetros del Modelo — Ajusta y el modelo recalcula en tiempo real</div>
+    <div class="sliders-grid">
+      <div class="slider-group">
+        <label>Capital propio inicial <span id="lbl-propio">$500,000</span></label>
+        <input type="range" id="sl-propio" min="200000" max="2000000" step="50000" value="500000">
+      </div>
+      <div class="slider-group">
+        <label>Fondeo de inversionistas <span id="lbl-inversion">$500,000</span></label>
+        <input type="range" id="sl-inversion" min="0" max="3000000" step="100000" value="500000">
+      </div>
+      <div class="slider-group">
+        <label>Tasa cobrada al cliente (% mens.) <span id="lbl-tasa">3.0%</span></label>
+        <input type="range" id="sl-tasa" min="1.5" max="5.0" step="0.1" value="3.0">
+      </div>
+      <div class="slider-group">
+        <label>Costo fondeo inversionistas (% mens.) <span id="lbl-costo">1.2%</span></label>
+        <input type="range" id="sl-costo" min="0.5" max="2.5" step="0.1" value="1.2">
+      </div>
+      <div class="slider-group">
+        <label>Cartera vencida estimada (%) <span id="lbl-morosidad">4%</span></label>
+        <input type="range" id="sl-morosidad" min="1" max="15" step="0.5" value="4">
+      </div>
+      <div class="slider-group">
+        <label>Crecimiento cartera (% mens.) <span id="lbl-crecimiento">8%</span></label>
+        <input type="range" id="sl-crecimiento" min="0" max="20" step="1" value="8">
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+
+  <div class="kpi-grid" id="kpi-grid">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- Funding Structure -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Estructura de Fondeo</div>
+    </div>
+    <div class="funding-row" id="funding-row"></div>
+  </div>
+
+  <!-- Chart -->
+
+  <div class="chart-container">
+    <div class="section-header">
+      <div class="section-title">Proyección de Utilidad Neta — 36 Meses</div>
+      <div class="section-badge" id="chart-badge">Mes 1–36</div>
+    </div>
+    <div class="toggle-row">
+      <button class="tab-btn active" onclick="setView('mensual',this)">Mensual</button>
+      <button class="tab-btn" onclick="setView('anual',this)">Anual</button>
+    </div>
+    <div class="chart-wrap" id="chart-wrap"></div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Ingreso bruto</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Costos y pérdidas</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Utilidad neta</div>
+    </div>
+  </div>
+
+  <!-- P&L Table -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Estado de Resultados Proyectado</div>
+      <div class="section-badge">Año 1 / 2 / 3</div>
+    </div>
+    <div class="table-card">
+      <table id="pnl-table"></table>
+    </div>
+  </div>
+
+  <!-- Flujo acumulado -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Flujo de Efectivo Acumulado</div>
+    </div>
+    <div class="table-card">
+      <table id="cashflow-table"></table>
+    </div>
+  </div>
+
+  <!-- Sensitivity -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Análisis de Sensibilidad (ROI año 1)</div>
+      <div class="section-badge">3 Escenarios</div>
+    </div>
+    <div class="sensitivity-grid" id="sensitivity-grid"></div>
+  </div>
+
+  <!-- Risk -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Mapa de Riesgos</div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Riesgo</th><th>Impacto</th><th>Probabilidad</th><th>Mitigación</th></tr></thead>
+        <tbody>
+          <tr><td>Cartera vencida elevada</td><td class="neg">Alto</td><td><span class="risk-high">Alta</span></td><td>Scoring crediticio riguroso, garantías CFDI</td></tr>
+          <tr><td>Fondeo insuficiente</td><td class="neutral">Medio</td><td><span class="risk-med">Media</span></td><td>Diversificar fuentes: NAFIN + ángeles</td></tr>
+          <tr><td>Incumplimiento regulatorio</td><td class="neg">Alto</td><td><span class="risk-low">Baja</span></td><td>Constituir SOFOM ENR desde el inicio</td></tr>
+          <tr><td>Concentración de cartera</td><td class="neutral">Medio</td><td><span class="risk-med">Media</span></td><td>Límite 15% por cliente, diversificar sectores</td></tr>
+          <tr><td>Competencia fintech establecida</td><td class="neutral">Medio</td><td><span class="risk-high">Alta</span></td><td>Nicho: PyMEs sin acceso a bancos tradicionales</td></tr>
+          <tr><td>Alza en tasas de referencia</td><td class="neutral">Medio</td><td><span class="risk-low">Baja</span></td><td>Contratos con cláusula de ajuste de tasa</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Road to scale -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Hoja de Ruta de Escalamiento</div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Fase</th><th>Horizonte</th><th>Meta de cartera</th><th>Acciones clave</th></tr></thead>
+        <tbody>
+          <tr><td><span class="risk-low">Fase 1 · Arranque</span></td><td>Meses 1–6</td><td class="num neutral">$1,000,000</td><td>Constitución SOFOM, primeros 10 acreditados, validar proceso</td></tr>
+          <tr><td><span class="risk-med">Fase 2 · Tracción</span></td><td>Meses 7–18</td><td class="num neutral">$3,000,000</td><td>Fondeo con 2–3 inversionistas, plataforma digital de originación</td></tr>
+          <tr><td><span class="risk-high">Fase 3 · Escala</span></td><td>Meses 19–36</td><td class="num pos" id="fase3-meta">$8,000,000</td><td>Línea NAFIN, integración CFDI automática, scoring IA</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Modelo financiero orientativo · Cifras en MXN · Elaborado por Mtro. Alan Cerón C. · Quantum Strategy</footer>
+</div>
+
+<script>
+const fmt = (n, dec=0) => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',minimumFractionDigits:dec,maximumFractionDigits:dec}).format(n);
+const pct = n => (n*100).toFixed(1)+'%';
+
+let chartView = 'mensual';
+
+function setView(v, btn) {
+  chartView = v;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function getParams() {
+  return {
+    propio: +document.getElementById('sl-propio').value,
+    inversion: +document.getElementById('sl-inversion').value,
+    tasa: +document.getElementById('sl-tasa').value / 100,
+    costo: +document.getElementById('sl-costo').value / 100,
+    morosidad: +document.getElementById('sl-morosidad').value / 100,
+    crecimiento: +document.getElementById('sl-crecimiento').value / 100,
+  };
+}
+
+function updateLabels(p) {
+  document.getElementById('lbl-propio').textContent = fmt(p.propio);
+  document.getElementById('lbl-inversion').textContent = fmt(p.inversion);
+  document.getElementById('lbl-tasa').textContent = (p.tasa*100).toFixed(1)+'%';
+  document.getElementById('lbl-costo').textContent = (p.costo*100).toFixed(1)+'%';
+  document.getElementById('lbl-morosidad').textContent = (p.morosidad*100).toFixed(1)+'%';
+  document.getElementById('lbl-crecimiento').textContent = (p.crecimiento*100).toFixed(0)+'%';
+}
+
+function calcMonths(p) {
+  const gastosFijos = 15000; // operativos mensuales
+  let cartera = p.propio + p.inversion;
+  const months = [];
+  for (let m = 1; m <= 36; m++) {
+    const ingresoBruto = cartera * p.tasa;
+    const costoFondeo = p.inversion * p.costo;
+    const perdidaCartera = cartera * p.morosidad / 12;
+    const costoTotal = costoFondeo + perdidaCartera + gastosFijos;
+    const utilidad = ingresoBruto - costoTotal;
+    months.push({ m, cartera, ingresoBruto, costoFondeo, perdidaCartera, gastosFijos, costoTotal, utilidad });
+    cartera = cartera * (1 + p.crecimiento) - perdidaCartera;
+    cartera = Math.max(cartera, p.propio + p.inversion);
+  }
+  return months;
+}
+
+function render() {
+  const p = getParams();
+  updateLabels(p);
+  const months = calcMonths(p);
+
+  const totalCapital = p.propio + p.inversion;
+  const utilYear1 = months.slice(0,12).reduce((a,m)=>a+m.utilidad,0);
+  const utilYear2 = months.slice(12,24).reduce((a,m)=>a+m.utilidad,0);
+  const utilYear3 = months.slice(24,36).reduce((a,m)=>a+m.utilidad,0);
+  const roi1 = utilYear1 / p.propio;
+  const breakEven = months.findIndex(m=>m.utilidad>0)+1;
+  const carteraMes36 = months[35].cartera;
+
+  // KPIs
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card green">
+      <div class="kpi-label">Capital total desplegado</div>
+      <div class="kpi-value green">${fmt(totalCapital)}</div>
+      <div class="kpi-sub">Propio + inversionistas</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Utilidad neta año 1</div>
+      <div class="kpi-value amber">${fmt(utilYear1)}</div>
+      <div class="kpi-sub">${fmt(utilYear1/12)} / mes promedio</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">ROI sobre capital propio</div>
+      <div class="kpi-value purple">${(roi1*100).toFixed(0)}%</div>
+      <div class="kpi-sub">Año 1 anualizado</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Break-even</div>
+      <div class="kpi-value">Mes ${breakEven>0?breakEven:'1'}</div>
+      <div class="kpi-sub">Primer mes con utilidad positiva</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Cartera estimada mes 36</div>
+      <div class="kpi-value amber">${fmt(carteraMes36)}</div>
+      <div class="kpi-sub">Con crecimiento del ${(p.crecimiento*100).toFixed(0)}% mensual</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Spread neto mensual</div>
+      <div class="kpi-value green">${((p.tasa-p.costo)*100).toFixed(2)}%</div>
+      <div class="kpi-sub">Tasa cobrada − costo fondeo</div>
+    </div>
+  `;
+
+  // Funding
+  document.getElementById('funding-row').innerHTML = `
+    <div class="funding-card">
+      <div class="funding-label">Capital propio</div>
+      <div class="funding-amount" style="color:var(--accent)">${fmt(p.propio)}</div>
+      <div class="funding-pct">${((p.propio/totalCapital)*100).toFixed(0)}% del total · Sin costo de fondeo</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${(p.propio/totalCapital)*100}%;background:var(--accent)"></div></div>
+    </div>
+    <div class="funding-card">
+      <div class="funding-label">Fondeo inversionistas</div>
+      <div class="funding-amount" style="color:var(--accent2)">${fmt(p.inversion)}</div>
+      <div class="funding-pct">${((p.inversion/totalCapital)*100).toFixed(0)}% del total · Costo ${(p.costo*100).toFixed(1)}% mensual</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${(p.inversion/totalCapital)*100}%;background:var(--accent2)"></div></div>
+    </div>
+    <div class="funding-card">
+      <div class="funding-label">Retorno anual al inversionista</div>
+      <div class="funding-amount" style="color:var(--accent3)">${fmt(p.inversion*p.costo*12)}</div>
+      <div class="funding-pct">${(p.costo*12*100).toFixed(1)}% anual — propuesta atractiva vs CETES</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((p.costo*12/0.15)*100,100)}%;background:var(--accent3)"></div></div>
+    </div>
+  `;
+
+  // Chart
+  const chartData = chartView === 'mensual' ? months : [
+    { label:'Año 1', ingresoBruto: months.slice(0,12).reduce((a,m)=>a+m.ingresoBruto,0), costoTotal: months.slice(0,12).reduce((a,m)=>a+m.costoTotal,0), utilidad: utilYear1 },
+    { label:'Año 2', ingresoBruto: months.slice(12,24).reduce((a,m)=>a+m.ingresoBruto,0), costoTotal: months.slice(12,24).reduce((a,m)=>a+m.costoTotal,0), utilidad: utilYear2 },
+    { label:'Año 3', ingresoBruto: months.slice(24,36).reduce((a,m)=>a+m.ingresoBruto,0), costoTotal: months.slice(24,36).reduce((a,m)=>a+m.costoTotal,0), utilidad: utilYear3 },
+  ];
+  const maxVal = Math.max(...chartData.map(d=>d.ingresoBruto));
+  const h = 180;
+  const chartWrap = document.getElementById('chart-wrap');
+  chartWrap.innerHTML = chartData.map((d,i)=>{
+    const bIncome = (d.ingresoBruto/maxVal)*h;
+    const bCost = (d.costoTotal/maxVal)*h;
+    const bProfit = Math.max((Math.abs(d.utilidad)/maxVal)*h,2);
+    const profitColor = d.utilidad>=0?'profit':'cost';
+    const lbl = chartView==='mensual'? (i+1) : d.label;
+    return `<div class="bar-group">
+      <div class="bar income" style="height:${bIncome}px" title="Ingreso: ${fmt(d.ingresoBruto)}"></div>
+      <div class="bar-label">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  // P&L Table
+  const pnlData = [
+    ['Ingreso bruto (intereses)', fmt(months.slice(0,12).reduce((a,m)=>a+m.ingresoBruto,0)), fmt(months.slice(12,24).reduce((a,m)=>a+m.ingresoBruto,0)), fmt(months.slice(24,36).reduce((a,m)=>a+m.ingresoBruto,0)), 'pos'],
+    ['− Costo de fondeo (inversionistas)', fmt(months.slice(0,12).reduce((a,m)=>a+m.costoFondeo,0)), fmt(months.slice(12,24).reduce((a,m)=>a+m.costoFondeo,0)), fmt(months.slice(24,36).reduce((a,m)=>a+m.costoFondeo,0)), 'neg'],
+    ['− Pérdida cartera vencida', fmt(months.slice(0,12).reduce((a,m)=>a+m.perdidaCartera,0)), fmt(months.slice(12,24).reduce((a,m)=>a+m.perdidaCartera,0)), fmt(months.slice(24,36).reduce((a,m)=>a+m.perdidaCartera,0)), 'neg'],
+    ['− Gastos operativos fijos', fmt(gastosFijosAnual()), fmt(gastosFijosAnual()), fmt(gastosFijosAnual()), 'neg'],
+  ];
+  function gastosFijosAnual(){return 15000*12;}
+  document.getElementById('pnl-table').innerHTML = `
+    <thead><tr><th>Concepto</th><th class="num">Año 1</th><th class="num">Año 2</th><th class="num">Año 3</th></tr></thead>
+    <tbody>
+      ${pnlData.map(r=>`<tr><td>${r[0]}</td><td class="num ${r[4]}">${r[1]}</td><td class="num ${r[4]}">${r[2]}</td><td class="num ${r[4]}">${r[3]}</td></tr>`).join('')}
+      <tr class="total-row"><td>= Utilidad neta estimada</td><td class="num pos">${fmt(utilYear1)}</td><td class="num pos">${fmt(utilYear2)}</td><td class="num pos">${fmt(utilYear3)}</td></tr>
+      <tr><td style="color:var(--muted)">ROI sobre capital propio</td><td class="num neutral">${(utilYear1/p.propio*100).toFixed(0)}%</td><td class="num neutral">${(utilYear2/p.propio*100).toFixed(0)}%</td><td class="num neutral">${(utilYear3/p.propio*100).toFixed(0)}%</td></tr>
+    </tbody>
+  `;
+
+  // Cashflow acumulado
+  let acum = 0;
+  const cfRows = [1,3,6,12,18,24,30,36].map(m=>{
+    acum = months.slice(0,m).reduce((a,x)=>a+x.utilidad,0);
+    return `<tr><td>Mes ${m}</td><td class="num">${fmt(months[m-1].cartera)}</td><td class="num pos">${fmt(months[m-1].ingresoBruto)}</td><td class="num neg">${fmt(months[m-1].costoTotal)}</td><td class="num ${acum>=0?'pos':'neg'}">${fmt(acum)}</td></tr>`;
+  });
+  document.getElementById('cashflow-table').innerHTML = `
+    <thead><tr><th>Período</th><th class="num">Cartera activa</th><th class="num">Ingreso mensual</th><th class="num">Costo mensual</th><th class="num">Flujo acumulado</th></tr></thead>
+    <tbody>${cfRows.join('')}</tbody>
+  `;
+
+  // Sensitivity
+  const scenarios = [
+    { label:'Pesimista', tasa: p.tasa*0.8, morosidad: p.morosidad*2, crecimiento: p.crecimiento*0.5, color:'var(--danger)' },
+    { label:'Base', tasa: p.tasa, morosidad: p.morosidad, crecimiento: p.crecimiento, color:'var(--accent)' },
+    { label:'Optimista', tasa: p.tasa*1.2, morosidad: p.morosidad*0.5, crecimiento: p.crecimiento*1.5, color:'var(--green)' },
+  ];
+  document.getElementById('sensitivity-grid').innerHTML = scenarios.map(s=>{
+    const sp = {...p, tasa:s.tasa, morosidad:s.morosidad, crecimiento:s.crecimiento};
+    const sm = calcMonths(sp);
+    const su = sm.slice(0,12).reduce((a,m)=>a+m.utilidad,0);
+    const sroi = (su/p.propio*100).toFixed(0);
+    return `<div class="sens-card">
+      <div class="sens-scenario">${s.label}</div>
+      <div class="sens-roi" style="color:${s.color}">${sroi}%</div>
+      <div class="sens-note">ROI anual · Tasa ${(s.tasa*100).toFixed(1)}% · Mora ${(s.morosidad*100).toFixed(1)}%</div>
+      <div class="sens-note" style="margin-top:4px">Utilidad: ${fmt(su)}</div>
+    </div>`;
+  }).join('');
+
+  // Fase 3 meta
+  document.getElementById('fase3-meta').textContent = fmt(carteraMes36);
+}
+
+// Wire sliders
+['sl-propio','sl-inversion','sl-tasa','sl-costo','sl-morosidad','sl-crecimiento'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+});
+
+render();
+</script>
+
+</body>
+</html>
